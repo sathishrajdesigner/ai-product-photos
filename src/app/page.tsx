@@ -73,6 +73,7 @@ export default function ProductStudio() {
   const frameRefs = [useRef<HTMLCanvasElement>(null), useRef<HTMLCanvasElement>(null), useRef<HTMLCanvasElement>(null)]
   const sizeRef = useRef<HTMLCanvasElement>(null)
   const fileRef = useRef<HTMLInputElement>(null)
+  const cameraRef = useRef<HTMLInputElement>(null)
 
   const showToast = (msg: string) => { setToast(msg); setTimeout(() => setToast(''), 2500) }
 
@@ -342,11 +343,12 @@ export default function ProductStudio() {
               style={{ background: 'var(--black)', color: '#fff', border: 'none', borderRadius: 16, padding: '16px 32px', fontSize: 15, fontWeight: 600, cursor: 'pointer', width: '100%', maxWidth: 280 }}>
               Choose from gallery
             </button>
-            <button onClick={() => fileRef.current?.click()} className="ripple"
+            <button onClick={() => cameraRef.current?.click()} className="ripple"
               style={{ background: 'transparent', color: 'var(--black)', border: '1.5px solid var(--border)', borderRadius: 16, padding: '14px 32px', fontSize: 15, fontWeight: 500, cursor: 'pointer', width: '100%', maxWidth: 280, marginTop: 12 }}>
               Take a photo
             </button>
-            <input ref={fileRef} type="file" accept="image/*" capture="environment" onChange={onFile} style={{ display: 'none' }} />
+            <input ref={fileRef} type="file" accept="image/*" onChange={onFile} style={{ display: 'none' }} />
+            <input ref={cameraRef} type="file" accept="image/*" capture="environment" onChange={onFile} style={{ display: 'none' }} />
           </div>
         )}
 
