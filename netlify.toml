@@ -5,18 +5,6 @@
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
-[functions]
-  # AI API routes (Gemini image generation, Claude analysis) can take >10s.
-  # Free tier max is 10s; upgrade to Netlify Pro for up to 26s.
-  node_bundler = "nft"
-  included_files = ["**/*.wasm"]
-
-[functions."api/gemini"]
-  timeout = 26
-
-[functions."api/analyze"]
-  timeout = 26
-
 [context.production.environment]
   NODE_ENV = "production"
   NEXT_TELEMETRY_DISABLED = "1"
