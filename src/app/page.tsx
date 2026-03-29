@@ -68,6 +68,7 @@ export default function ProductStudio() {
     front: 'idle', left: 'idle', angle: 'idle', dimensions: 'idle',
   })
   const [aiResults, setAiResults] = useState<Record<string, string>>({})
+  const [aiErrors,  setAiErrors]  = useState<Record<string, string>>({})
 
   const editRef = useRef<HTMLCanvasElement>(null)
   const frameRefs = [useRef<HTMLCanvasElement>(null), useRef<HTMLCanvasElement>(null), useRef<HTMLCanvasElement>(null)]
@@ -218,6 +219,7 @@ export default function ProductStudio() {
     if (!uploadedB64) return
     setAiRunning(true)
     setAiResults({})
+    setAiErrors({})
     setAiSteps({ front: 'idle', left: 'idle', angle: 'idle', dimensions: 'idle' })
 
     const call = async (body: object) => {
@@ -245,9 +247,11 @@ export default function ProductStudio() {
             setAiResults(r => ({ ...r, [imageType]: `data:${d.mimeType};base64,${d.imageBase64}` }))
             setAiSteps(s => ({ ...s, [imageType]: 'done' }))
           } else {
+            setAiErrors(e => ({ ...e, [imageType]: d.error || 'No image returned' }))
             setAiSteps(s => ({ ...s, [imageType]: 'error' }))
           }
-        } catch {
+        } catch (err) {
+          setAiErrors(e => ({ ...e, [imageType]: String(err) }))
           setAiSteps(s => ({ ...s, [imageType]: 'error' }))
         }
       })
@@ -596,9 +600,14 @@ export default function ProductStudio() {
                 <div className="card" style={{ padding: 14, marginBottom: 14 }}>
                   <SectionLabel>Generating</SectionLabel>
                   {steps.map((st, i) => (
-                    <div key={st.key} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 0', borderBottom: i < steps.length - 1 ? '1px solid var(--border)' : 'none' }}>
-                      <div style={{ width: 20, display: 'flex', justifyContent: 'center' }}>{icon(aiSteps[st.key])}</div>
-                      <div style={{ fontSize: 13, color: aiSteps[st.key] === 'running' ? 'var(--black)' : aiSteps[st.key] === 'done' ? 'var(--black)' : 'var(--muted)', fontWeight: aiSteps[st.key] === 'running' ? 600 : 400 }}>{st.label}</div>
+                    <div key={st.key} style={{ padding: '9px 0', borderBottom: i < steps.length - 1 ? '1px solid var(--border)' : 'none' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                        <div style={{ width: 20, display: 'flex', justifyContent: 'center' }}>{icon(aiSteps[st.key])}</div>
+                        <div style={{ fontSize: 13, color: aiSteps[st.key] === 'running' ? 'var(--black)' : aiSteps[st.key] === 'done' ? 'var(--black)' : 'var(--muted)', fontWeight: aiSteps[st.key] === 'running' ? 600 : 400 }}>{st.label}</div>
+                      </div>
+                      {aiSteps[st.key] === 'error' && aiErrors[st.key] && (
+                        <div style={{ fontSize: 11, color: '#dc2626', marginTop: 4, marginLeft: 30, wordBreak: 'break-word' }}>{aiErrors[st.key]}</div>
+                      )}
                     </div>
                   ))}
                 </div>

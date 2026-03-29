@@ -5,3 +5,10 @@
 [build.environment]
   NODE_VERSION = "20"
   NEXT_TELEMETRY_DISABLED = "1"
+
+[functions]
+  node_bundler = "nft"
+
+# Gemini image generation and Claude analysis can take >10s
+[functions."___netlify-handler"]
+  timeout = 26
